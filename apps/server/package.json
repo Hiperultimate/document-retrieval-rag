@@ -13,7 +13,8 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.7",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "weaviate-client": "^3.4.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
