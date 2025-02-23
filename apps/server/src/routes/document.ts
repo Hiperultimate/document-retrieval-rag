@@ -1,9 +1,12 @@
 import { uploadDocument } from '../controller/uploadDocument';
-import express, { Router } from 'express';
+import { documentTalk } from '../controller/documentTalk';
+import { Router } from 'express';
+import { listDocuments } from '../controller/listDocuments';
 
-const router: Router = express.Router();
+const router: Router = Router();
 
 router.post('/upload', uploadDocument);
-// router.get('/document-talk', talk);
+router.post('/talk', documentTalk);
+router.get('/list', listDocuments);
 
 export default router;
