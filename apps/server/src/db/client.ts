@@ -23,7 +23,7 @@ export async function connectToVectorDB() {
 // Collection structure that will be used to create new collection for new documents uploaded
 export function generateCollectionStructure(collectionName: string) {
   const classDefinition = {
-    name: `${collectionName}Document`,
+    name: `${collectionName}`,
     description: `Contents of a document called ${collectionName}`,
     vectorizers: vectorizer.text2VecCohere(),
     generative: generative.cohere(),
@@ -33,13 +33,6 @@ export function generateCollectionStructure(collectionName: string) {
         dataType: "text" as const,
         description: "The text content of the chunk.",
         skipVectorization: false,
-        vectorizePropertyName: false,
-      },
-      {
-        name: "documentId",
-        dataType: "text" as const,
-        description: "The unique ID of the document this chunk belongs to.",
-        skipVectorization: true,
         vectorizePropertyName: false,
       },
       {

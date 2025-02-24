@@ -1,3 +1,4 @@
+import { chunkText } from "../utils/chunkText";
 import { connectToVectorDB } from "../db/client";
 import {
   createCollection,
@@ -20,7 +21,7 @@ export const uploadDocument = async (
     const dbConnection = await connectToVectorDB();
 
     // Get collection name
-    const collectionName = "jeopardyTiny";
+    const collectionName = "PrivacyTest";
 
     // Create collection in vector DB
     await createCollection(dbConnection, collectionName);
@@ -29,23 +30,22 @@ export const uploadDocument = async (
 
     // add logic batch processed data
 
-    // Temp logic
-    const response = await fetch(
-      "https://raw.githubusercontent.com/weaviate-tutorials/quickstart/main/data/jeopardy_tiny.json"
-    );
-    if (!response.ok) {
-      throw new Error("Error fetching temp data...");
-    }
+    const response =
+      "Privacy Policy Generator Not everyone knows how to make a Privacy Policy agreement, especially with CCPA or GDPR or CalOPPA or PIPEDA or Australia's Privacy Act provisions. If you are not a lawyer or someone who is familiar to Privacy Policies, you will be clueless. Some people might even take advantage of you because of this. Some people may even extort money from you. These are some examples that we want to stop from happening to you. We will help you protect yourself by generating a Privacy Policy. Our Privacy Policy Generator can help you make sure that your business complies with the law. We are here to help you protect your business, yourself and your customers. Fill in the blank spaces below and we will create a personalized website Privacy Policy for your business. No account registration required. Simply generate & download a Privacy Policy in seconds! Small remark when filling in this Privacy Policy generator: Not all parts of this Privacy Policy might be applicable to your website. When there are parts that are not applicable, these can be removed. Optional elements can be selected in step 2. The accuracy of the generated Privacy Policy on this website is not legally binding. Use at your own risk. Looking for Terms and Conditions? Check out Terms and Conditions Generator.";
 
-    const processedData: { [key: string]: string }[] = await response.json();
+    // const processedData: { [key: string]: string }[] = await response.json();
+
+    const chunkedTextArray = chunkText(response, 60, 20);
+    const processedData = chunkedTextArray.map((chunk) => {
+      return { content: chunk, fileName: collectionName };
+    });
 
     const documentResponse = await importDocumentDataToCollection(
       dbConnection,
       collectionName,
       processedData
     );
-
-    console.log("Document Response :", documentResponse);
+    
     dbConnection.close();
     res
       .status(200)
