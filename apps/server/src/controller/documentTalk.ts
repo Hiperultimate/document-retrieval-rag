@@ -29,7 +29,7 @@ export const documentTalk = async (
     const checkingOut = await dbConnection.collections.get(documentName);
 
     const relatedTags = await checkingOut.query.nearText(query, {
-      limit: 30,
+      limit: 3,
     });
 
     dbConnection.close();
