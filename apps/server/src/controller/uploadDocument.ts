@@ -3,10 +3,12 @@ import { connectToVectorDB } from "../db/client";
 import {
   createCollection,
   importDocumentDataToCollection,
+  overwriteCollectionIfAlreadyExist,
 } from "../db/collections";
 import { chunkText } from "../utils/chunkText";
 import getTextFromFile from "../utils/getTextFromFile";
 import {
+  capitalizeFirstLetter,
   cleanStopWordBatch,
   removeFileExtension,
   sanitizeString,
@@ -39,8 +41,6 @@ export const uploadDocument = async (
   try {
     text = await getTextFromFile(req.file.mimetype, req.file.buffer);
     console.log("Received text : ", text);
-    // res.send(text);
-    // return;
   } catch (error) {
     console.error(error);
     res.status(500).send("Error processing file");
@@ -52,9 +52,12 @@ export const uploadDocument = async (
     const dbConnection = await connectToVectorDB();
 
     // Cleans the filename and makes it the collection name
-    const collectionName = sanitizeString(
-      removeFileExtension(req.file.originalname)
+    const collectionName = capitalizeFirstLetter(
+      sanitizeString(removeFileExtension(req.file.originalname))
     );
+
+    // If collection name already exists, delete it
+    await overwriteCollectionIfAlreadyExist(dbConnection, collectionName);
 
     // Create collection in vector DB
     await createCollection(dbConnection, collectionName);

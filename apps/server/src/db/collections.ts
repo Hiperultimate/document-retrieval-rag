@@ -9,7 +9,8 @@ export async function createCollection(
   try {
     await client.collections.create(collectionStructure);
   } catch (error) {
-    console.error("Error in creating collection : ", collectionName);
+    console.error("Error in creating collection for : ", collectionName);
+    console.error(error);
   }
 }
 
@@ -24,4 +25,19 @@ export async function importDocumentDataToCollection(
     await selectedCollection.data.insertMany(processedData);
 
   return insertResponse;
+}
+
+export async function overwriteCollectionIfAlreadyExist(
+  client: WeaviateClient,
+  collectionName: string
+): Promise<void> {
+  const isCollectionExist = await client.collections.exists(collectionName);
+
+  if (!isCollectionExist) return;
+
+  console.log(
+    "Client is adding a collection that already exists, deleting the old one record:",
+    collectionName
+  );
+  await client.collections.delete(collectionName);
 }
